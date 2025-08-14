@@ -1,13 +1,9 @@
 package Entity;
 
-import Entity.*;
-import Entity.Enemy.*;
-
 import java.util.ArrayList;
 
 public class Grid {
     private Block[][] blocks = new Block[6][5]; // 6 rows, 5 columns
-    private ArrayList<Entity> entities;
 
     public Grid() {
         for (int y = 0; y < 6; y++) {
@@ -32,6 +28,7 @@ public class Grid {
             System.out.println();
         }
     }
+
     public ArrayList<Block> getBlocksInRange(int centerY, int centerX, int range) {
         ArrayList<Block> blocksInRange = new ArrayList<>();
         for (int y = Math.max(0, centerY - range); y <= Math.min(5, centerY + range); y++) {
@@ -43,32 +40,25 @@ public class Grid {
         }
         return blocksInRange;
     }
-    public boolean moveEnemyRight(Enemy enemy) {
-        int currentY = enemy.getPositionY();
-        int currentX = enemy.getPositionX();
 
-        Block currentBlock = getBlockAt(currentY, currentX);
-        if (currentBlock != null) {
-            currentBlock.removeEntity(enemy);
+    public ArrayList<Entity> getAllEntities() {
+        ArrayList<Entity> allEntities = new ArrayList<>();
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 5; x++) {
+                allEntities.addAll(blocks[y][x].getEntities());
+            }
         }
-
-        int newX = currentX + 1;
-        if (newX >= 5) {
-            // Enemy reached the right edge, handle accordingly (remove or stop)
-            return false;
-        }
-
-        enemy.setPositionX(newX);
-
-        Block newBlock = getBlockAt(currentY, newX);
-        if (newBlock != null) {
-            newBlock.addEntity(enemy);
-            return true;
-        }
-
-        return false;
+        return allEntities;
     }
 
-
+    public void moveEntity(Entity e, int newY, int newX) {
+        Block oldBlock = getBlockAt(e.getPositionY(), e.getPositionX());
+        Block newBlock = getBlockAt(newY, newX);
+        if (oldBlock != null) oldBlock.removeEntity(e);
+        if (newBlock != null) newBlock.addEntity(e);
+        e.setPositionY(newY);
+        e.setPositionX(newX);
+    }
 }
+
 

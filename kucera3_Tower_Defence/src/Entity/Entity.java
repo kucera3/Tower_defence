@@ -14,6 +14,8 @@ public class Entity {
         this.positionX = positionX;
     }
     // implement pohyb
+    public void doAction(Grid grid) {
+    }
 
 
     public void onShotArrival() {

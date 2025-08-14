@@ -19,6 +19,14 @@ public class Enemy extends Entity {
         super.onShotArrival();
         takeDamage(1);
     }
+    @Override
+    public void doAction(Grid grid) {
+        int newX = getPositionX() + speed;
+        if (newX < 5) { // Grid width
+            grid.moveEntity(this, getPositionY(), newX);
+        }
+    }
+
     public void moveRight() {
         setPositionX(getPositionX() + 1);
     }

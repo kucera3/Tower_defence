@@ -3,7 +3,7 @@ package Tower_Defence.UI;
 import javax.swing.*;
 import java.awt.*;
 
-import Tower_Defence.ActionListener;
+import Tower_Defence.ActionListenerrr;
 import Tower_Defence.Entity;
 import Tower_Defence.Grid;
 
@@ -11,22 +11,22 @@ public class GamePanel extends JPanel {
     private Grid grid;
     private final int BLOCK_SIZE = 80;
 
-    public GamePanel(Grid grid) {
+    public GamePanel() {
         this.grid = grid;
         setPreferredSize(new Dimension(5 * BLOCK_SIZE, 6 * BLOCK_SIZE));
         setBackground(Color.BLACK);
-
-        Timer timer = new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                for (Entity entity : grid.getAllEntities()) {
-                    entity.doAction(grid);
-                }
-                repaint();
+        startGameLoop();
+    }
+    private void startGameLoop() {
+        Timer timer = new Timer(1000, e -> {
+            for (Entity entity : grid.getAllEntities()) {
+                entity.doAction(grid);
             }
+            repaint();
         });
         timer.start();
     }
+
 
     @Override
     protected void paintComponent(Graphics g) {

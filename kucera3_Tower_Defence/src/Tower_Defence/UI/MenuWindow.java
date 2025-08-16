@@ -1,43 +1,58 @@
 package Tower_Defence.UI;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class MenuWindow {
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Tower Defence");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(3000, 2000);
-        frame.setLocationRelativeTo(null); // Center the window on screen
+    private JFrame frame;
 
-        // Create a panel with a vertical box layout to hold buttons
+    public MenuWindow() {
+        // Create the main frame
+        frame = new JFrame("Tower Defence");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 600); // reasonable size
+        frame.setLocationRelativeTo(null); // center on screen
+
+        // Create a panel with vertical layout
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-        // Add some vertical spacing before the buttons
-        panel.add(Box.createVerticalGlue());
+        panel.add(Box.createVerticalGlue()); // spacing at top
 
         // Create buttons
         JButton playButton = new JButton("Play");
         JButton upgradeButton = new JButton("Upgrade");
 
-        // Center the buttons
+        // Center buttons
         playButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         upgradeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Add actions
+        playButton.addActionListener(e -> openGameWindow());
+        upgradeButton.addActionListener(e -> openUpgradeWindow());
+
         // Add buttons with spacing
         panel.add(playButton);
-        panel.add(Box.createRigidArea(new Dimension(0, 20))); // spacing
+        panel.add(Box.createRigidArea(new Dimension(0, 20)));
         panel.add(upgradeButton);
+        panel.add(Box.createVerticalGlue()); // spacing at bottom
 
-        // Add some vertical spacing after the buttons
-        panel.add(Box.createVerticalGlue());
-
-        // Add panel to frame
         frame.add(panel);
-
-        // Make frame visible
         frame.setVisible(true);
     }
+
+    private void openGameWindow() {
+        GamePanel gamePanel = new GamePanel();
+        new GameWindow(gamePanel);
+        frame.dispose(); // close menu
+    }
+
+    private void openUpgradeWindow() {
+        new UpgradeWindow(); // pass current frame for "back" button
+        frame.dispose(); // close menu
+    }
 }
+
+
+
 

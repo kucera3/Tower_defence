@@ -1,15 +1,11 @@
 package Tower_Defence;
 
-
-import Tower_Defence.UI.GamePanel;
-import Tower_Defence.UI.GameWindow;
+import Tower_Defence.UI.MenuWindow;
+import javax.swing.SwingUtilities;
 
 public class Main {
     public static void main(String[] args) {
-        Grid grid = new Grid();
-
-        GamePanel panel = new GamePanel(grid);
-        new GameWindow(panel);
-
+        // Start the application by opening the menu window
+        SwingUtilities.invokeLater(MenuWindow::new);
     }
 }

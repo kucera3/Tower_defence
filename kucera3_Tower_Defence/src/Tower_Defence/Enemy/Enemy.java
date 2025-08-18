@@ -15,6 +15,10 @@ public class Enemy extends Entity {
         this.isAlive = hp > 0;
     }
 
+    public Enemy() {
+        super();
+    }
+
     @Override
     public void onShotArrival() {
         super.onShotArrival();
@@ -45,7 +49,7 @@ public class Enemy extends Entity {
         return isAlive;
     }
 
-    // Setters
+    
     public void setHp(int hp) {
         this.hp = hp;
         this.isAlive = hp > 0;

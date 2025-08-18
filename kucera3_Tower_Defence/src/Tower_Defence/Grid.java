@@ -13,20 +13,12 @@ public class Grid {
         }
     }
 
-    public Block getBlockAt(int y, int x) {
-        if (y >= 0 && y < 6 && x >= 0 && x < 5) {
-            return blocks[y][x];
+
+    public Block getBlock(int row, int col) {
+        if (row >= 0 && row < 6 && col >= 0 && col < 5) {
+            return blocks[row][col];
         }
         return null;
-    }
-
-    public void printGrid() {
-        for (int y = 0; y < 6; y++) {
-            for (int x = 0; x < 5; x++) {
-                System.out.print("[" + blocks[y][x].getName() + "] ");
-            }
-            System.out.println();
-        }
     }
 
     public ArrayList<Block> getBlocksInRange(int centerY, int centerX, int range) {
@@ -52,13 +44,24 @@ public class Grid {
     }
 
     public void moveEntity(Entity e, int newY, int newX) {
-        Block oldBlock = getBlockAt(e.getPositionY(), e.getPositionX());
-        Block newBlock = getBlockAt(newY, newX);
+        Block oldBlock = getBlock(e.getPositionY(), e.getPositionX());
+        Block newBlock = getBlock(newY, newX);
         if (oldBlock != null) oldBlock.removeEntity(e);
         if (newBlock != null) newBlock.addEntity(e);
         e.setPositionY(newY);
         e.setPositionX(newX);
     }
+
+
+    public void printGrid() {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 5; x++) {
+                System.out.print("[" + blocks[y][x].getName() + "] ");
+            }
+            System.out.println();
+        }
+    }
 }
+
 
 

@@ -1,6 +1,7 @@
 package Tower_Defence.UI;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class GameWindow extends JFrame {
     public GameWindow(GamePanel gamePanel) {
@@ -8,10 +9,19 @@ public class GameWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
+        // Get screen dimensions
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = (int) screenSize.getWidth();
+        int height = (int) screenSize.getHeight();
+
+        // Set panel preferred size to screen size
+        gamePanel.setPreferredSize(new Dimension(width, height));
+
         add(gamePanel);
-        pack(); // Resize window to fit panel's preferred size
-        setLocationRelativeTo(null); // Center on screen
+        pack(); // Resizes frame to match panel
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 }
+
 

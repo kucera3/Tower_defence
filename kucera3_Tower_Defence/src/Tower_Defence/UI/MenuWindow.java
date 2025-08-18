@@ -11,8 +11,15 @@ public class MenuWindow {
         // Create the main frame
         frame = new JFrame("Tower Defence");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600); // reasonable size
         frame.setLocationRelativeTo(null); // center on screen
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = (int) (screenSize.getWidth());
+        int height = (int) (screenSize.getHeight());
+        frame.setSize(width, height);
+        frame.setLocationRelativeTo(null); // recenter
+
+
 
         // Create a panel with vertical layout
         JPanel panel = new JPanel();
@@ -27,11 +34,12 @@ public class MenuWindow {
         playButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         upgradeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Add actions
+        //actions
         playButton.addActionListener(e -> openGameWindow());
         upgradeButton.addActionListener(e -> openUpgradeWindow());
 
-        // Add buttons with spacing
+
+        //buttons with spacing
         panel.add(playButton);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
         panel.add(upgradeButton);
@@ -39,6 +47,7 @@ public class MenuWindow {
 
         frame.add(panel);
         frame.setVisible(true);
+
     }
 
     private void openGameWindow() {
@@ -48,8 +57,7 @@ public class MenuWindow {
     }
 
     private void openUpgradeWindow() {
-        new UpgradeWindow(); // pass current frame for "back" button
-        frame.dispose(); // close menu
+        new UpgradeWindow();
     }
 }
 

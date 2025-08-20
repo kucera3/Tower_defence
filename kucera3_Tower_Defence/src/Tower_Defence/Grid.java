@@ -4,10 +4,11 @@ import java.util.ArrayList;
 
 public class Grid {
 
-    private static Grid instance;
+
 
     public static final int DEFAULT_ROWS = 6;
     public static final int DEFAULT_COLS = 5;
+    private static Grid instance = new Grid(DEFAULT_ROWS, DEFAULT_COLS);
 
     private int rows;
     private int cols;
@@ -27,9 +28,6 @@ public class Grid {
 
 
     public static Grid getInstance() {
-        if (instance == null) {
-            instance = new Grid(DEFAULT_ROWS, DEFAULT_COLS);
-        }
         return instance;
     }
 

@@ -1,9 +1,6 @@
 package Tower_Defence.UI;
 
-import Tower_Defence.Block;
-import Tower_Defence.Entity;
-import Tower_Defence.GameBalanceManager;
-import Tower_Defence.Grid;
+import Tower_Defence.*;
 import Tower_Defence.Tower.*;
 
 import javax.swing.*;
@@ -51,9 +48,11 @@ public class GamePanel extends JPanel {
         });
         addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                int mouseX = e.getX();
-                int mouseY = e.getY();
+            public void mouseClicked(MouseEvent event) {
+                int mouseX = event.getX();
+                int mouseY = event.getY();
+                Log.logD("event clicked " + mouseX + " " + mouseY);
+                Log.logD("");
 
                 int xOffset = (getWidth() - grid.getCols() * BLOCK_SIZE) / 2;
                 int yOffset = getHeight() - grid.getRows() * BLOCK_SIZE;

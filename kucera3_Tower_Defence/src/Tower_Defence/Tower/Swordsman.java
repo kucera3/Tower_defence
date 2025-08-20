@@ -5,6 +5,8 @@ public class Swordsman extends Tower {
         super(name, positionY, positionX, range, damage, upgradeCost, type, imagePath);
     }
 
-
+    public Swordsman(String name, int positionY, int positionX) {
+        super(name, positionY, positionX);
+    }
 }
 

@@ -5,5 +5,8 @@ public class Buffer extends Tower {
         super(name, positionY, positionX, range, damage, upgradeCost, type, imagePath);
     }
 
+    public Buffer(String name, int positionY, int positionX) {
+        super(name, positionY, positionX);
+    }
 }
 

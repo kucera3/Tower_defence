@@ -1,50 +1,75 @@
 package Tower_Defence;
 
-import Tower_Defence.Tower.Tower;
-
 import java.util.ArrayList;
 
 public class Block extends Entity {
     private int row, col;
-    private Tower tower;
     private ArrayList<Entity> entities = new ArrayList<>();
 
     public Block(String name, int positionY, int positionX) {
         super(name, positionY, positionX);
+        this.row = positionY;
+        this.col = positionX;
+    }
+
+    @Override
+    public void doAction(Grid grid) {
+
+    }
+
+    public Block(Entity entity, int row, int col) {
+        super(entity.getName(), row, col);
+        this.entities.add(entity);
+        this.row = row;
+        this.col = col;
     }
 
     public void addEntity(Entity e) {
         entities.add(e);
         if (e instanceof Shot) {
+            // Notify all entities in this block that a shot arrived
             for (Entity neighbor : entities) {
                 neighbor.onShotArrival();
             }
         }
     }
 
-    public boolean hasTower() {
-        return tower != null;
-    }
-
-    public void placeTower(Tower tower) {
-        this.tower = tower;
-    }
-
-    public void removeTower() {
-        this.tower = null;
-    }
-
-
-    public Tower getTower() {
-        return tower;
+    public void removeEntity(Entity e) {
+        entities.remove(e);
     }
 
     public ArrayList<Entity> getEntities() {
         return new ArrayList<>(entities);
     }
 
-    public void removeEntity(Entity e) {
-        entities.remove(e);
+
+    public boolean hasEntityOfType(Class<?> clazz) {
+        for (Entity e : entities) {
+            if (clazz.isInstance(e)) return true;
+        }
+        return false;
+    }
+
+    // Getters and setters
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public void setCol(int col) {
+        this.col = col;
+    }
+
+    public void setEntities(ArrayList<Entity> entities) {
+        this.entities = entities;
     }
 }
+
 

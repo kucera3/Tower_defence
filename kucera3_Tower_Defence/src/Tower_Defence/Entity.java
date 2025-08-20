@@ -1,36 +1,23 @@
 package Tower_Defence;
 
-public class Entity {
+public abstract class Entity {
     private String name;
-    private int positionY;
-    private int positionX;
-
-    public Entity() {
-    }
+    private int positionY; // row
+    private int positionX; // col
+    private int health;
 
     public Entity(String name, int positionY, int positionX) {
         this.name = name;
         this.positionY = positionY;
         this.positionX = positionX;
+        this.health = 100; // default health
     }
-    // implement pohyb
-    public void doAction(Grid grid) {
-    }
+    public Entity(){
 
-
-    public void onShotArrival() {
-    }
-
-    public void takeDamage(int damage) {
-        positionY += damage;
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public int getPositionY() {
@@ -48,4 +35,37 @@ public class Entity {
     public void setPositionX(int positionX) {
         this.positionX = positionX;
     }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public boolean isAlive() {
+        return health > 0;
+    }
+
+    public void takeDamage(int amount) {
+        this.health -= amount;
+        if (this.health <= 0) {
+            onDeath();
+        }
+    }
+
+
+    public abstract void doAction(Grid grid);
+
+
+    public void onShotArrival() {
+        // default: do nothing, enemies can override this
+    }
+
+    public void onDeath() {
+        // default: entity disappears from grid
+        Grid.getInstance().getBlock(positionY, positionX).removeEntity(this);
+    }
 }
+

@@ -16,6 +16,7 @@ public class Tower extends Entity {
     private Type type;
     private String imagePath; // path for UpgradeWindow images
 
+
     public Tower(String name, int positionY, int positionX, int range, int damage, int upgradeCost, Type type, String imagePath) {
         super(name, positionY, positionX);
         this.range = range;
@@ -24,6 +25,10 @@ public class Tower extends Entity {
         this.type = type;
         this.level = 1;
         this.imagePath = imagePath;
+    }
+
+    public Tower(String name, int positionY, int positionX) {
+        super(name, positionY, positionX);
     }
 
     public Tower(String name, int positionY, int positionX, int range, int damage, int upgradeCost, Type support) {
@@ -75,6 +80,11 @@ public class Tower extends Entity {
 
     public void takeDamage(int damage) {
         this.damage -= damage;
+    }
+
+    @Override
+    public void doAction(Grid grid) {
+
     }
 }
 

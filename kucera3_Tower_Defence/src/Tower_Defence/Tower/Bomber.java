@@ -5,4 +5,8 @@ public class Bomber extends Tower {
         super(name, positionY, positionX, range, damage, upgradeCost, Type.ATTACKER);
     }
 
+    public Bomber(String name, int positionY, int positionX) {
+        super(name, positionY, positionX);
+    }
+
 }

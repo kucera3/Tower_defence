@@ -11,6 +11,10 @@ import java.util.HashMap;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Rectangle;
+// mouselisten suradnice blockou
+//grid awt component
+//https://chatgpt.com/share/68a6141d-987c-8004-8f4c-c51ba8faa72b
+//zjistit lokaciu gridu-mouse listener na kliknutie
 
 public class GamePanel extends JPanel {
 

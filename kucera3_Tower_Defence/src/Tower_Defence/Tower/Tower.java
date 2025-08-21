@@ -1,6 +1,7 @@
 package Tower_Defence.Tower;
 
 import Tower_Defence.Block;
+import Tower_Defence.Enemy.Enemy;
 import Tower_Defence.Entity;
 import Tower_Defence.Grid;
 import Tower_Defence.MoneyManager;
@@ -15,6 +16,8 @@ public class Tower extends Entity {
     private int upgradeCost;
     private Type type;
     private String imagePath; // path for UpgradeWindow images
+
+    private Enemy target;
 
 
     public Tower(String name, int positionY, int positionX, int range, int damage, int upgradeCost, Type type, String imagePath) {
@@ -34,6 +37,7 @@ public class Tower extends Entity {
     public Tower(String name, int positionY, int positionX, int range, int damage, int upgradeCost, Type support) {
         super();
     }
+
 
     public ArrayList<Entity> getEntitiesInRange(Grid grid) {
         ArrayList<Entity> entitiesInRange = new ArrayList<>();
@@ -77,6 +81,14 @@ public class Tower extends Entity {
     public void setUpgradeCost(int upgradeCost) { this.upgradeCost = upgradeCost; }
     public void setType(Type type) { this.type = type; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
+
+    public Enemy getTarget() {
+        return target;
+    }
+
+    public void setTarget(Enemy target) {
+        this.target = target;
+    }
 
     public void takeDamage(int damage) {
         this.damage -= damage;

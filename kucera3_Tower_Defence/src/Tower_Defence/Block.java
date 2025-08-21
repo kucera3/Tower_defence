@@ -16,6 +16,12 @@ public class Block extends Entity {
     public void doAction(Grid grid) {
 
     }
+    public void clearEntities() {
+        if (entities != null) {
+            entities.clear(); // remove all entities from this block
+        }
+    }
+
 
     public Block(Entity entity, int row, int col) {
         super(entity.getName(), row, col);

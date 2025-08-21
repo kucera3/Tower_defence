@@ -1,6 +1,8 @@
 package Tower_Defence.UI;
 
 import Tower_Defence.*;
+import Tower_Defence.Enemy.*;
+import Tower_Defence.Enemy.WaveManager;
 import Tower_Defence.Tower.*;
 
 import javax.swing.*;
@@ -16,6 +18,7 @@ import java.awt.Rectangle;
 //https://chatgpt.com/share/68a6141d-987c-8004-8f4c-c51ba8faa72b
 //zjistit lokaciu gridu-mouse listener na kliknutie
 
+
 public class GamePanel extends JPanel {
 
     private final Grid grid;
@@ -25,15 +28,22 @@ public class GamePanel extends JPanel {
 
     // Tower images cache
     private final HashMap<String, Image> towerImages = new HashMap<>();
+    private final HashMap<String, Image> enemyImages = new HashMap<>();
+    private boolean gameStarted = false;
+    private Timer gameTimer;
+    private Image backgroundImage;
 
     public GamePanel() {
         this.grid = Grid.getInstance();
         setPreferredSize(new Dimension(grid.getCols() * BLOCK_SIZE, grid.getRows() * BLOCK_SIZE));
         setBackground(Color.BLACK);
+        backgroundImage = new ImageIcon(getClass().getResource("/background.jpg")).getImage();
         GameBalanceManager.startNewGame();
 
-        // Load tower images from resources
+        // Load images from resources
         loadTowerImages();
+        loadEnemyImages();
+        addMouseListener(new GridClickListener());
 
         // Add Buy Tower Button
         JButton buyTowerButton = new JButton("Buy New Tower (Cost: 100)");
@@ -49,51 +59,6 @@ public class GamePanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "Not enough money!");
             }
             repaint();
-        });
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent event) {
-                int mouseX = event.getX();
-                int mouseY = event.getY();
-                Log.logD("event clicked " + mouseX + " " + mouseY);
-                Log.logD("");
-
-                int xOffset = (getWidth() - grid.getCols() * BLOCK_SIZE) / 2;
-                int yOffset = getHeight() - grid.getRows() * BLOCK_SIZE;
-
-                for (Entity entity : grid.getAllEntities()) {
-                    if (!(entity instanceof Tower)) continue;
-
-                    int px = xOffset + entity.getPositionX() * BLOCK_SIZE;
-                    int py = yOffset + entity.getPositionY() * BLOCK_SIZE;
-                    int towerSize = BLOCK_SIZE / 2;
-                    int towerX = px + (BLOCK_SIZE - towerSize) / 2;
-                    int towerY = py + (BLOCK_SIZE - towerSize) / 2;
-
-                    // Check Replace button
-                    Rectangle replaceRect = new Rectangle(towerX, towerY - 18, towerSize, 15);
-                    if (replaceRect.contains(mouseX, mouseY)) {
-                        //replaceTower((Tower) entity);
-                        repaint();
-                        return;
-                    }
-
-                    // Check Upgrade button
-                    Rectangle upgradeRect = new Rectangle(towerX, towerY + towerSize + 3, towerSize, 15);
-                    if (upgradeRect.contains(mouseX, mouseY)) {
-                        upgradeTower((Tower) entity);
-                        repaint();
-                        return;
-                    }
-
-                    // Optional: click on tower itself
-                    Rectangle towerRect = new Rectangle(towerX, towerY, towerSize, towerSize);
-                    if (towerRect.contains(mouseX, mouseY)) {
-                        JOptionPane.showMessageDialog(GamePanel.this, entity.getName());
-                        return;
-                    }
-                }
-            }
         });
 
 
@@ -185,16 +150,44 @@ public class GamePanel extends JPanel {
         repaint();
     }*/
 
-
-    private void upgradeTower(Tower tower) {
+    public void resetGame() {
+        EnemyManager.reset();
+        TowerManager.reset();
+        Grid.getInstance().reset();
+        GameBalanceManager.reset();
+        WaveManager.setCurrentWave(0);
+        repaint();
     }
 
 
     private void startGameLoop() {
-        Timer timer = new Timer(1000, e -> {
-            for (Entity entity : grid.getAllEntities()) {
-                entity.doAction(grid);
+        Timer timer = new Timer(200, e -> {
+            boolean gameOver = false;
+            // Enemy actions
+            for (Enemy enemy : EnemyManager.getAllEnemies()) {
+                enemy.doAction(grid);
+                if (enemy.hasReachedEnd()) {
+                    gameOver = true;
+                }
             }
+
+            // Spawn enemies gradually
+            Enemy newEnemy = WaveManager.spawnNextEnemy(grid);
+            if (newEnemy != null) EnemyManager.addEnemy(newEnemy);
+
+            // Start next wave if current cleared
+            if (WaveManager.isWaveCleared(grid)) {
+                WaveManager.startNextWave();
+            }
+            if (gameOver) {
+                ((Timer)e.getSource()).stop();
+
+
+                resetGame();
+
+                SwingUtilities.invokeLater(() -> new EndScreenWindow((JFrame) SwingUtilities.getWindowAncestor(this)));
+            }
+
             repaint();
         });
         timer.start();
@@ -206,6 +199,13 @@ public class GamePanel extends JPanel {
         towerImages.put("Archer", new ImageIcon(getClass().getResource("/archeringame.png")).getImage());
         towerImages.put("Bomber", new ImageIcon(getClass().getResource("/bomberingame.png")).getImage());
     }
+    private void loadEnemyImages() {
+        enemyImages.put("SmallEnemy", new ImageIcon(getClass().getResource("/smallenemy.png")).getImage());
+        enemyImages.put("MiddleEnemy", new ImageIcon(getClass().getResource("/middleenemy.png")).getImage());
+        enemyImages.put("BigEnemy", new ImageIcon(getClass().getResource("/bigenemy.png")).getImage());
+        enemyImages.put("Boss", new ImageIcon(getClass().getResource("/boss.png")).getImage());
+    }
+
 
     private boolean placeRandomTowerOnEmptyBlock() {
         Random rand = new Random();
@@ -254,19 +254,17 @@ public class GamePanel extends JPanel {
 
         int gridWidth = grid.getCols() * BLOCK_SIZE;
         int gridHeight = grid.getRows() * BLOCK_SIZE;
-
-        // Center horizontally
         int xOffset = (getWidth() - gridWidth) / 2;
-        // Align to bottom
         int yOffset = getHeight() - gridHeight;
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
+        }
 
-        // Draw grid blocks
+        // Draw grid
         for (int y = 0; y < grid.getRows(); y++) {
             for (int x = 0; x < grid.getCols(); x++) {
-                int px = xOffset + x * BLOCK_SIZE;
-                int py = yOffset + y * BLOCK_SIZE;
                 g.setColor(Color.GRAY);
-                g.drawRect(px, py, BLOCK_SIZE, BLOCK_SIZE);
+                g.drawRect(xOffset + x * BLOCK_SIZE, yOffset + y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
             }
         }
 
@@ -276,37 +274,73 @@ public class GamePanel extends JPanel {
             int py = yOffset + e.getPositionY() * BLOCK_SIZE;
 
             if (e instanceof Tower) {
-                int towerSize = BLOCK_SIZE / 2;
-                int towerX = px + (BLOCK_SIZE - towerSize) / 2;
-                int towerY = py + (BLOCK_SIZE - towerSize) / 2;
+                int size = BLOCK_SIZE / 2;
+                int towerX = px + (BLOCK_SIZE - size) / 2;
+                int towerY = py + (BLOCK_SIZE - size) / 2;
+                Image img = towerImages.getOrDefault(e.getName(), null);
+                if (img != null) g.drawImage(img, towerX, towerY, size, size, null);
+                else { g.setColor(Color.BLUE); g.fillOval(towerX, towerY, size, size); }
 
-                // Draw tower image if available
-                if (towerImages.containsKey(e.getName())) {
-                    g.drawImage(towerImages.get(e.getName()), towerX, towerY, towerSize, towerSize, null);
-                } else {
-                    g.setColor(Color.BLUE);
-                    g.fillOval(towerX, towerY, towerSize, towerSize);
-                }
-
-                // Draw buttons
+                // Buttons
                 g.setColor(Color.DARK_GRAY);
-                // Replace button above tower
-                g.fillRect(towerX, towerY - 18, towerSize, 15);
-                g.setColor(Color.WHITE);
-                g.drawString("Replace", towerX + 5, towerY - 6);
+                g.fillRect(towerX, towerY - 18, size, 15);
+                g.setColor(Color.WHITE); g.drawString("Replace", towerX + 5, towerY - 6);
 
-                // Upgrade button below tower
                 g.setColor(Color.DARK_GRAY);
-                g.fillRect(towerX, towerY + towerSize + 3, towerSize, 15);
-                g.setColor(Color.WHITE);
-                g.drawString("Upgrade", towerX + 5, towerY + towerSize + 14);
-
+                g.fillRect(towerX, towerY + size + 3, size, 15);
+                g.setColor(Color.WHITE); g.drawString("Upgrade", towerX + 5, towerY + size + 14);
+            } else { // Draw enemies
+                int size = BLOCK_SIZE / 2;
+                int enemyX = ((Enemy) e).getPixelX(xOffset) + (BLOCK_SIZE - size) / 2;
+                int enemyY = ((Enemy) e).getPixelY(yOffset) + (BLOCK_SIZE - size) / 2;
+                Image img = enemyImages.getOrDefault(e.getName(), null);
+                if (img != null) g.drawImage(img, enemyX, enemyY, size, size, null);
+                else { g.setColor(Color.RED); g.fillOval(enemyX, enemyY, size, size); }
             }
         }
 
-        // Display current balance
+        // Display money
         g.setColor(Color.YELLOW);
         g.drawString("Money: " + GameBalanceManager.getBalance(), 10, 20);
+
+        // Display current wave
+        g.setColor(Color.CYAN);
+        g.drawString("Wave: " + WaveManager.getCurrentWave(), 10, 40);
+    }
+
+    private class GridClickListener extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            int mouseX = e.getX();
+            int mouseY = e.getY();
+            int xOffset = (getWidth() - grid.getCols() * BLOCK_SIZE) / 2;
+            int yOffset = getHeight() - grid.getRows() * BLOCK_SIZE;
+
+            for (Entity entity : grid.getAllEntities()) {
+                if (!(entity instanceof Tower)) continue;
+
+                int towerSize = BLOCK_SIZE / 2;
+                int towerX = xOffset + entity.getPositionX() * BLOCK_SIZE + (BLOCK_SIZE - towerSize) / 2;
+                int towerY = yOffset + entity.getPositionY() * BLOCK_SIZE + (BLOCK_SIZE - towerSize) / 2;
+
+                // Replace button
+                if (new Rectangle(towerX, towerY - 18, towerSize, 15).contains(mouseX, mouseY)) {
+                    repaint(); return;
+                }
+
+                // Upgrade button
+                if (new Rectangle(towerX, towerY + towerSize + 3, towerSize, 15).contains(mouseX, mouseY)) {
+                    // upgradeTower((Tower) entity);
+                    repaint(); return;
+                }
+
+                // Click on tower itself
+                if (new Rectangle(towerX, towerY, towerSize, towerSize).contains(mouseX, mouseY)) {
+                    JOptionPane.showMessageDialog(GamePanel.this, entity.getName());
+                    return;
+                }
+            }
+        }
     }
 
 }

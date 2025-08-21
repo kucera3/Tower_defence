@@ -37,6 +37,13 @@ public class Grid {
         }
         return null;
     }
+    public void reset() {
+        for (int y = 0; y < getRows(); y++) {
+            for (int x = 0; x < getCols(); x++) {
+                getBlock(y, x).clearEntities();
+            }
+        }
+    }
 
     public ArrayList<Block> getBlocksInRange(int centerY, int centerX, int range) {
         ArrayList<Block> blocksInRange = new ArrayList<>();

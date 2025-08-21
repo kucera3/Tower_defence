@@ -15,6 +15,9 @@ public class TowerManager {
         }
         return null;
     }
+    public static void reset() {
+        towers.clear();
+    }
 
     public static ArrayList<Tower> getAllTowers() {
         return towers;

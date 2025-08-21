@@ -8,6 +8,10 @@ public class GameBalanceManager {
         balance = 200; // starting money each game
         towerCost = 100; // initial tower price
     }
+    public static void reset() {
+        balance = 0;
+    }
+
 
 
     public static int getBalance() {

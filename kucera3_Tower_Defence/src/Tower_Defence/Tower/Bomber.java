@@ -9,4 +9,7 @@ public class Bomber extends Tower {
         super(name, positionY, positionX);
     }
 
+    public Bomber() {
+        super();
+    }
 }

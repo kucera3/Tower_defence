@@ -8,5 +8,9 @@ public class Buffer extends Tower {
     public Buffer(String name, int positionY, int positionX) {
         super(name, positionY, positionX);
     }
+
+    public Buffer() {
+        super();
+    }
 }
 

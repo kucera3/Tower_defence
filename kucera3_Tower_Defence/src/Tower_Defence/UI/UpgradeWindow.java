@@ -76,7 +76,8 @@ public class UpgradeWindow extends JFrame {
         // Tower image
         ImageIcon icon = null;
         try {
-            icon = new ImageIcon(getClass().getResource(tower.getImagePath()));
+            icon = new ImageIcon(getClass().getResource("/" + tower.getImagePath()));
+
         } catch (Exception e) {
             System.err.println("Image not found: " + tower.getImagePath());
         }

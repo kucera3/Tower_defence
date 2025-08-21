@@ -8,4 +8,8 @@ public class Archer extends Tower {
     public Archer(String name, int positionY, int positionX) {
         super(name, positionY, positionX);
     }
+
+    public Archer() {
+        super();
+    }
 }

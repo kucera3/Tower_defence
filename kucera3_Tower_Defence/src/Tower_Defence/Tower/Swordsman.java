@@ -8,5 +8,9 @@ public class Swordsman extends Tower {
     public Swordsman(String name, int positionY, int positionX) {
         super(name, positionY, positionX);
     }
+
+    public Swordsman() {
+        super();
+    }
 }
 

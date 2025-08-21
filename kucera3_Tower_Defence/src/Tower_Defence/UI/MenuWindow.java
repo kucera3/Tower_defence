@@ -1,5 +1,8 @@
 package Tower_Defence.UI;
 
+import Tower_Defence.Tower.*;
+import Tower_Defence.Tower.Tower;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -57,8 +60,15 @@ public class MenuWindow {
     }
 
     private void openUpgradeWindow() {
-        new UpgradeWindow();
+        Tower[] towers = {
+                new Archer(),
+                new Bomber(),
+                new Buffer(),
+                new Swordsman()
+        };
+        new UpgradeWindow(towers);
     }
+
 }
 
 

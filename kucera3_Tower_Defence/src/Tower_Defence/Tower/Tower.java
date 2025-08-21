@@ -27,6 +27,9 @@ public class Tower extends Entity {
         this.imagePath = imagePath;
     }
 
+    public Tower() {
+    }
+
     public Tower(String name, int positionY, int positionX) {
         super(name, positionY, positionX);
     }

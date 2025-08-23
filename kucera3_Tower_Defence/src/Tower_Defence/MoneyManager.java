@@ -18,5 +18,13 @@ public class MoneyManager {
         }
         return false;
     }
-}
 
+    
+    public static int calculateWaveReward(int waveReached) {
+        double reward = 100;
+        for (int i = 1; i < waveReached; i++) {
+            reward *= 1.5;
+        }
+        return (int) Math.ceil(reward);
+    }
+}

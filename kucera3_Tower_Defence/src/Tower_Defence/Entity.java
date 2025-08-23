@@ -48,7 +48,7 @@ public abstract class Entity {
         return health > 0;
     }
 
-    public void takeDamage(int amount) {
+    public void takeDamage(double amount) {
         this.health -= amount;
         if (this.health <= 0) {
             onDeath();

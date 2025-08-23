@@ -4,24 +4,45 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GameWindow extends JFrame {
+    private final OverlayPanel overlayPanel;
+    private final GamePanel gamePanel;
+
     public GameWindow(GamePanel gamePanel) {
+        this.gamePanel = gamePanel;
+
+        // Window setup
         setTitle("Tower Defense Game");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
-        // Get screen dimensions
+        // Create overlay and attach as GlassPane
+        overlayPanel = new OverlayPanel();
+        setGlassPane(overlayPanel);
+        overlayPanel.setVisible(false);
+        overlayPanel.setBounds(0, 0, getWidth(), getHeight());
+        overlayPanel.setLayout(null); // absolute positioning
+        overlayPanel.setOpaque(false);
+
+        // Match window size to screen
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int width = (int) screenSize.getWidth();
-        int height = (int) screenSize.getHeight();
+        gamePanel.setPreferredSize(screenSize);
 
-        // Set panel preferred size to screen size
-        gamePanel.setPreferredSize(new Dimension(width, height));
-
-        add(gamePanel);
-        pack(); // Resizes frame to match panel
-        setLocationRelativeTo(null);
+        // Add main game panel
+        add(gamePanel, BorderLayout.CENTER);
+        pack();
+        setLocationRelativeTo(null); // Center window
         setVisible(true);
     }
+
+    public OverlayPanel getOverlayPanel() {
+        return overlayPanel;
+    }
+
+    public GamePanel getGamePanel() {
+        return gamePanel;
+    }
 }
+
+
 
 

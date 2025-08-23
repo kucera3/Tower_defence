@@ -47,6 +47,14 @@ public class Enemy extends Entity {
     public Enemy() {
         super();
     }
+    private void updateBlock(Grid grid) {
+        int row = (int) Math.floor(posY);
+        int col = (int) Math.floor(posX);
+
+        if (row != getPositionY() || col != getPositionX()) {
+            grid.moveEntity(this, row, col);
+        }
+    }
     private void generatePath() {
         Grid grid = Grid.getInstance();
         // Example path: bottom-left -> top-left -> top-right -> bottom-right
@@ -83,10 +91,11 @@ public class Enemy extends Entity {
     public void doAction(Grid grid) {
         if (isAlive) {
             moveAlongPath();
+            updateBlock(grid); // <- sync grid
         }
     }
 
-    public void takeDamage(int amount) {
+    public void takeDamage(double amount) {
         hp -= amount;
         if (hp <= 0) {
             hp = 0;

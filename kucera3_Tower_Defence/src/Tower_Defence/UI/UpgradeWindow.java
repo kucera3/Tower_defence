@@ -1,7 +1,7 @@
 package Tower_Defence.UI;
 
 import Tower_Defence.MoneyManager;
-import Tower_Defence.Tower.*;
+import Tower_Defence.Tower.Tower;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,36 +10,37 @@ public class UpgradeWindow extends JFrame {
 
     private JLabel balanceLabel;
 
-    public UpgradeWindow() {
-    }
-
     public UpgradeWindow(Tower[] towers) {
         setTitle("Tower Defence - Upgrade");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
+        setSize(900, 450);
         setLocationRelativeTo(null);
 
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int width = (int) (screenSize.getWidth() * 0.5);
-        int height = (int) (screenSize.getHeight() * 0.5);
-        setSize(width, height);
-
+        // Main panel
         JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(Color.DARK_GRAY);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Title
+        // Top panel: title + balance
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(Color.DARK_GRAY);
+
         JLabel titleLabel = new JLabel("Upgrade Menu", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        mainPanel.add(titleLabel, BorderLayout.NORTH);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
+        titleLabel.setForeground(Color.WHITE);
+        topPanel.add(titleLabel, BorderLayout.CENTER);
 
-        // Balance
-        balanceLabel = new JLabel("Balance: $" + MoneyManager.getBalance(), SwingConstants.CENTER);
+        balanceLabel = new JLabel("Balance: $" + MoneyManager.getBalance(), SwingConstants.RIGHT);
         balanceLabel.setFont(new Font("Arial", Font.BOLD, 18));
         balanceLabel.setForeground(Color.GREEN);
-        mainPanel.add(balanceLabel, BorderLayout.SOUTH);
+        topPanel.add(balanceLabel, BorderLayout.EAST);
 
-        // Towers Panel
-        JPanel towersPanel = new JPanel(new GridLayout(1, towers.length, 20, 10));
-        towersPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+
+        // Center panel: towers in a horizontal row
+        JPanel towersPanel = new JPanel(new GridLayout(1, towers.length, 20, 0));
+        towersPanel.setBackground(Color.DARK_GRAY);
 
         for (Tower tower : towers) {
             towersPanel.add(createTowerPanel(tower));
@@ -47,51 +48,58 @@ public class UpgradeWindow extends JFrame {
 
         mainPanel.add(towersPanel, BorderLayout.CENTER);
 
-        // Back Button
-        JButton backButton = new JButton("X");
+        // Bottom panel: back button
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setBackground(Color.DARK_GRAY);
+        JButton backButton = new JButton("Back to Menu");
+        backButton.setFont(new Font("Arial", Font.BOLD, 16));
         backButton.addActionListener(e -> {
-            new MenuWindow(); // reopen menu
-            dispose(); // close upgrade window
+            new MenuWindow();
+            dispose();
         });
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        topPanel.add(backButton);
-        mainPanel.add(topPanel, BorderLayout.NORTH);
+        bottomPanel.add(backButton);
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
         setVisible(true);
     }
 
-    //source 50% ChatGPT
     private JPanel createTowerPanel(Tower tower) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
         panel.setBackground(Color.DARK_GRAY);
+        panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+        panel.setPreferredSize(new Dimension(180, 350));
 
+        // Tower Name
         JLabel nameLabel = new JLabel(tower.getName(), SwingConstants.CENTER);
         nameLabel.setFont(new Font("Arial", Font.BOLD, 18));
         nameLabel.setForeground(Color.WHITE);
         nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Tower image
+        // Tower Image
+        String imagePath = "/images/" + getTowerImageFile(tower.getName()); // classpath resource
         ImageIcon icon = null;
         try {
-            icon = new ImageIcon(getClass().getResource(tower.getImagePath()));
+            icon = new ImageIcon(getClass().getResource(imagePath));
         } catch (Exception e) {
-            System.err.println("Image not found: " + tower.getImagePath());
+            System.err.println("Image not found: " + imagePath);
+            icon = new ImageIcon(); // empty icon fallback
         }
-        JLabel imageLabel = (icon != null) ?
-                new JLabel(new ImageIcon(icon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH))) :
-                new JLabel("No Image");
-        imageLabel.setForeground(Color.WHITE);
+        Image scaledImage = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
         imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Tower Level
         JLabel levelLabel = new JLabel("Level: " + tower.getLevel(), SwingConstants.CENTER);
+        levelLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         levelLabel.setForeground(Color.WHITE);
         levelLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Upgrade Button
         JButton upgradeButton = new JButton("Upgrade ($" + tower.getUpgradeCost() + ")");
         upgradeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        upgradeButton.setMaximumSize(new Dimension(160, 30));
         upgradeButton.addActionListener(e -> {
             if (MoneyManager.spendMoney(tower.getUpgradeCost())) {
                 tower.upgrade();
@@ -103,6 +111,7 @@ public class UpgradeWindow extends JFrame {
             }
         });
 
+        // Add components with spacing
         panel.add(Box.createVerticalStrut(10));
         panel.add(nameLabel);
         panel.add(Box.createVerticalStrut(10));
@@ -116,7 +125,13 @@ public class UpgradeWindow extends JFrame {
         return panel;
     }
 
+    private String getTowerImageFile(String towerName) {
+        return switch (towerName) {
+            case "Archer" -> "archers.png";
+            case "Bomber" -> "bomber.png";
+            case "Buffer" -> "buffer.png";
+            case "Swordsman" -> "swordsman.png";
+            default -> "default.png";
+        };
+    }
 }
-
-
-

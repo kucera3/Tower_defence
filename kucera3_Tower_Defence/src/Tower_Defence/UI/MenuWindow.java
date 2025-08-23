@@ -1,5 +1,8 @@
 package Tower_Defence.UI;
 
+import Tower_Defence.Tower.Tower;
+import Tower_Defence.Tower.TowerManager;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -8,6 +11,7 @@ public class MenuWindow {
     private JFrame frame;
 
     public MenuWindow() {
+
         // Create the main frame
         frame = new JFrame("Tower Defence");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -51,14 +55,17 @@ public class MenuWindow {
     }
 
     private void openGameWindow() {
-        GamePanel gamePanel = new GamePanel();
+        OverlayPanel overlayPanel = new OverlayPanel();
+        GamePanel gamePanel = new GamePanel(overlayPanel);
         new GameWindow(gamePanel);
         frame.dispose(); // close menu
     }
 
     private void openUpgradeWindow() {
-        new UpgradeWindow();
+        Tower[] towers = TowerManager.getAllTowers().toArray(new Tower[0]);
+        new UpgradeWindow(towers);
     }
+
 }
 
 

@@ -45,13 +45,13 @@ public class Grid {
         }
     }
 
-    public ArrayList<Block> getBlocksInRange(int centerY, int centerX, int range) {
+    public ArrayList<Block> getBlocksInRange(int centerY, int centerX, double range) {
         ArrayList<Block> blocksInRange = new ArrayList<>();
 
-        for (int y = Math.max(0, centerY - range); y <= Math.min(rows - 1, centerY + range); y++) {
-            for (int x = Math.max(0, centerX - range); x <= Math.min(cols - 1, centerX + range); x++) {
+        for (double y = Math.max(0, centerY - range); y <= Math.min(rows - 1, centerY + range); y++) {
+            for (int x = (int) Math.max(0, centerX - range); x <= Math.min(cols - 1, centerX + range); x++) {
                 if (Math.abs(centerY - y) + Math.abs(centerX - x) <= range) {
-                    blocksInRange.add(blocks[y][x]);
+                    blocksInRange.add(blocks[(int) y][x]);
                 }
             }
         }
